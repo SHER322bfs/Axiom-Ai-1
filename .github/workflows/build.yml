@@ -37,11 +37,21 @@ jobs:
         with:
           gradle-version: '8.10.2'
 
+      
       - name: Extract project
         run: |
-          mkdir source
-          unzip -q AxiomAI.zip -d source
-          find source -name settings.gradle -o -name settings.gradle.kts
+          echo "Files in repository:"
+          find . -maxdepth 3 -type f
+          ZIP_FILE=$(find . -maxdepth 3 -type f -iname "*.zip" | head -n 1)
+          if [ -z "$ZIP_FILE" ]; then
+            echo "ERROR: No ZIP file found"
+            exit 1
+          fi
+          echo "Using ZIP: $ZIP_FILE"
+          mkdir -p source
+          unzip -q "$ZIP_FILE" -d source
+          echo "Extracted folders:"
+          find source -maxdepth 3 -type f -name "settings.gradle*" -o -name "gradlew"
 
       - name: Build APK
         run: |
